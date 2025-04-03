@@ -95,3 +95,10 @@ class TextPreprocessor:
            TF-IDF = TF x IDF
         """
         return np.array([self.tf(text) * self.idf_vector for text in texts])
+
+    def preprocess(self,text):
+        """Applies all the preprocessing steps to the text"""
+        text = self.lowercase(text)
+        text = self.rm_punc_num(text)
+        text = self.rm_stopwords(text)
+        return text
