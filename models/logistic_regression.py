@@ -51,12 +51,12 @@ class LogisticRegression:
 
     def save_model(self, path="model.pkl"):
         with open(path, 'wb') as f:
-            pickle.dump({'weights': self.weights, 'bias': self.bias}, f)
+            pickle.dump({'weights': self.W, 'bias': self.B}, f)
         print(f"[INFO] Model saved to {path}")
 
     def load_model(self, path="model.pkl"):
         with open(path, 'rb') as f:
             params = pickle.load(f)
-            self.weights = params['W']
-            self.bias = params['B']
+            self.W = params['W']
+            self.B = params['B']
         print(f"[INFO] Model loaded from {path}")
