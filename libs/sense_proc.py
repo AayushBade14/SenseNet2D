@@ -1,104 +1,67 @@
 import numpy as np
-import pandas as pd
+import pickle
 
 class TextPreprocessor:
-    
-    def __init__(self):
-        self.vocab = [] # stores unique words
-        self.idf_vector = None # stores IDF values
 
-    def lowercase(self,text):
-        """Convert the given text to lowercase
-           as sentiments are case insensitive
-        """
+    def __init__(self):
+        self.vocab = []
+        self.idf_vector = None
+
+    def lowercase(self, text):
         return text.lower()
 
-    def rm_punc_num(self,text):
-        """Removes punctuations and numbers
-           as these don't contribute much to sentiments
-        """
+    def rm_punc_num(self, text):
         reqd_chars = "abcdefghijklmnopqrstuvwxyz"
         return "".join([char if char in reqd_chars else " " for char in text])
 
-    def rm_stopwords(self,text):
-        """Removes common stopwords
-           These are common words like 
-           'in', 'the', 'and'... etc
-           that don't contribute to any sentiment
-        """
-
+    def rm_stopwords(self, text):
         stopwords = {
-            "the",
-            "is",
-            "in",
-            "and",
-            "to",
-            "a",
-            "on",
-            "this",
-            "that",
-            "it",
-            "of"
+            "the", "is", "in", "and", "to", "a", "on", "this",
+            "that", "it", "of"
         }
-
         words = text.split()
+        return " ".join([word for word in words if word not in stopwords])
 
-        return "".join([word for word in words if word not in stopwords ])
-
-    def tokenize(self,text):
-        """Splits text into tokens (individual words)"""
+    def tokenize(self, text):
         return text.split()
 
-    def build_vocab(self,texts):
-        """Creates vocabulary from the text datasets"""
-        
+    def build_vocab(self, texts):
         unique_words = set()
-        
         for text in texts:
             words = self.tokenize(text)
             unique_words.update(words)
-
         self.vocab = list(unique_words)
 
-    def tf(self,text):
-        """Computes Term-Frequency(TF)
-           It is a measure of how often a term
-           appears in a document/text 
-
-           TF(t) = (# times term t appears in a doc/text)/(total # terms in doc/text)
-        """
+    def tf(self, text):
         words = self.tokenize(text)
         word_freq = np.zeros(len(self.vocab))
-
-        for i,word in enumerate(self.vocab):
+        for i, word in enumerate(self.vocab):
             word_freq[i] = words.count(word)
+        return word_freq / max(1, len(words))
 
-        return word_freq/max(1,len(words))
-    
-    def idf(self,texts):
-        """Computes Inverse-Document-Frequency(IDF)
-           It measures how important a word is by checking how rare
-           it is across multiple docs/texts
-
-           IDF(t) = log((total # docs/texts)/(# docs/texts containing term t))
-        """
+    def idf(self, texts):
         num_docs = len(texts)
         word_doc_counts = np.zeros(len(self.vocab))
-
-        for i,word in enumerate(self.vocab):
+        for i, word in enumerate(self.vocab):
             word_doc_counts[i] = sum(1 for text in texts if word in self.tokenize(text))
+        self.idf_vector = np.log(num_docs / (1 + word_doc_counts))
 
-        self.idf_vector = np.log(num_docs/(1+word_doc_counts))
-
-    def tfidf(self,texts):
-        """Computes TF-IDF for all texts
-           TF-IDF = TF x IDF
-        """
+    def tfidf(self, texts):
         return np.array([self.tf(text) * self.idf_vector for text in texts])
 
-    def preprocess(self,text):
-        """Applies all the preprocessing steps to the text"""
+    def preprocess(self, text):
         text = self.lowercase(text)
         text = self.rm_punc_num(text)
         text = self.rm_stopwords(text)
         return text
+
+    def save(self, path="preprocessor.pkl"):
+        with open(path, "wb") as f:
+            pickle.dump({"vocab": self.vocab, "idf": self.idf_vector}, f)
+
+    def load(self, path="preprocessor.pkl"):
+        with open(path, "rb") as f:
+            data = pickle.load(f)
+            self.vocab = data["vocab"]
+            self.idf_vector = data["idf"]
+
