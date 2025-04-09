@@ -57,6 +57,6 @@ class LogisticRegression:
     def load_model(self, path="model.pkl"):
         with open(path, 'rb') as f:
             params = pickle.load(f)
-            self.W = params['W']
-            self.B = params['B']
+            self.W = params['weights']
+            self.B = params['bias']
         print(f"[INFO] Model loaded from {path}")
