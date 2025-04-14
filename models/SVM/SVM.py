@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score
 df = pd.read_csv("/content/train.csv", encoding="ISO-8859-1")
 
 df = df[['text', 'sentiment']].dropna()
-df = df.sample(n=25000, random_state=42)  # ✅ reduce to 3000 rows
+df = df.sample(n=25000, random_state=42)  # 
 
 # Step 2: Preprocessing
 X_raw = df['text']
@@ -23,7 +23,7 @@ label_encoder = LabelEncoder()
 y = label_encoder.fit_transform(y_raw)
 
 # Step 3: TF-IDF vectorization with limited features
-vectorizer = TfidfVectorizer(max_features=100)  # ✅ limit features
+vectorizer = TfidfVectorizer(max_features=100)  # 
 X = vectorizer.fit_transform(X_raw).toarray()
 
 # Step 4: Scale features
@@ -42,13 +42,13 @@ best_accuracy = 0
 best_model = None
 best_params = {}
 
-print("🚀 Starting fast training loop...\n")
+print(" Starting fast training loop...\n")
 
 # Step 7: Training loop
 for C in C_values:
     for gamma in gamma_values:
         count += 1
-        print(f"🔄 [{count}/{total}] Training C={C}, gamma={gamma}")
+        print(f" [{count}/{total}] Training C={C}, gamma={gamma}")
         start = time.time()
 
         model = SVC(kernel='rbf', C=C, gamma=gamma)  # change to 'linear' to go faster
@@ -58,7 +58,7 @@ for C in C_values:
         acc = accuracy_score(y_test, y_pred)
         end = time.time()
 
-        print(f"✅ Done! Accuracy: {acc * 100:.2f}% | Time: {end - start:.2f}s\n")
+        print(f" Done! Accuracy: {acc * 100:.2f}% | Time: {end - start:.2f}s\n")
 
         if acc > best_accuracy:
             best_accuracy = acc
@@ -66,8 +66,8 @@ for C in C_values:
             best_params = {'C': C, 'gamma': gamma}
 
 # Step 8: Save best model
-print("🎯 Best Accuracy: {:.2f}%".format(best_accuracy * 100))
-print("🏆 Best Parameters: C = {}, gamma = {}".format(best_params['C'], best_params['gamma']))
+print(" Best Accuracy: {:.2f}%".format(best_accuracy * 100))
+print(" Best Parameters: C = {}, gamma = {}".format(best_params['C'], best_params['gamma']))
 
 with open("svm_model.pkl", "wb") as f:
     pickle.dump({
@@ -77,7 +77,7 @@ with open("svm_model.pkl", "wb") as f:
         'label_encoder': label_encoder
     }, f)
 
-print("💾 Model saved as 'svm_model.pkl'")
+print(" Model saved as 'svm_model.pkl'")
 
 import pickle
 
@@ -97,5 +97,5 @@ X_new_scaled = scaler.transform(X_new)
 preds = model.predict(X_new_scaled)
 labels = label_encoder.inverse_transform(preds)
 
-print("🧠 Predictions:", labels)
+print(" Predictions:", labels)
 
