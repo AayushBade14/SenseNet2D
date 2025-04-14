@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Classifier</title>
+</head>
+<body>
+    <h1>Text Classification App</h1>
+    <form method="POST">
+        <label for="model_name">Choose model:</label>
+        <select name="model_name">
+            {% for name in models %}
+                <option value="{{ name }}" {% if name == selected_model %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <textarea name="input_text" rows="5" cols="60" placeholder="Enter your text here..."></textarea>
+        <br><br>
+        <button type="submit">Classify</button>
+    </form>
+
+    {% if prediction %}
+        <h2>Prediction: {{ prediction }}</h2>
+    {% endif %}
+</body>
+</html>
+
