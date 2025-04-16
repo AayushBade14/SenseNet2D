@@ -1,2 +1,5 @@
+streamlit
 tqdm
-sklearn
+numpy
+pandas
+scikit-learn
